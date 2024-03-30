@@ -1,3 +1,4 @@
+use dep::std;
 use dep::smt::{bn254::poseidon2_smt, SMT, SMTProof, op::Operation};
 
 global NUM_TRANSACTIONS = 10;
@@ -14,7 +15,7 @@ impl<N> Secp256k1Signature<N>
 {
     fn verify(self) -> bool
     {
-        dep::std::ecdsa_secp256k1::verify_signature(self.pub_key.0, self.pub_key.1, self.signature, self.msg_hash)
+        std::ecdsa_secp256k1::verify_signature(self.pub_key.0, self.pub_key.1, self.signature, self.msg_hash)
     }
 }
 
@@ -57,16 +58,16 @@ fn main(num_transactions: pub u32, proof: [SMTProof<Field, Field, Field, 160>; N
 {
     let smt: SMT<Field, Field, Field, 160> = poseidon2_smt();
     let mut cur_root = root;
-    
+
     for i in 0..NUM_TRANSACTIONS
     {
         if i < num_transactions
         {
-//            assert(signature[i].verify()); // Check signature
             assert(address_from_pubkey(signature[i].pub_key) == address[i]); // Check address
             assert(check_op(op[i], address[i], op_value[i], cur_root, signature[i].msg_hash)); // Check message
             cur_root = smt.compute_root(smt.process(proof[i], op[i], address[i], op_value[i], cur_root)); // Compute new root
         }
+        assert(signature[i].verify()); // Check signature
     }
 
    assert(cur_root == new_root);
