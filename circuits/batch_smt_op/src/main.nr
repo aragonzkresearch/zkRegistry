@@ -61,12 +61,11 @@ fn main(num_transactions: pub u32, proof: [SMTProof<Field, Field, Field, 160>; N
 
     for i in 0..NUM_TRANSACTIONS
     {
-        if i < num_transactions
-        {
-            assert(address_from_pubkey(signature[i].pub_key) == address[i]); // Check address
-            assert(check_op(op[i], address[i], op_value[i], cur_root, signature[i].msg_hash)); // Check message
-            cur_root = smt.compute_root(smt.process(proof[i], op[i], address[i], op_value[i], cur_root)); // Compute new root
-        }
+        let range_ind = i < num_transactions;
+        assert(!range_ind | (address_from_pubkey(signature[i].pub_key) == address[i])); // Check address
+        assert(!range_ind | check_op(op[i], address[i], op_value[i], cur_root, signature[i].msg_hash)); // Check message
+        
+        cur_root = (range_ind as Field) * smt.compute_root(smt.process(proof[i], op[i], address[i], op_value[i], (range_ind as Field) * cur_root)) + (1 - range_ind as Field) * cur_root; // Compute new root
         assert(signature[i].verify()); // Check signature
     }
 
