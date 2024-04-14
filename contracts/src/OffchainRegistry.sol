@@ -7,6 +7,9 @@ import "./SingleSMTOpVerifier.sol";
 /// Rudimentary ZKRegistry contract where everything is stored onchain
 contract OffchainRegistry
 {
+
+    event smt_op(uint256 indexed op, address indexed addr,  uint256 indexed value);
+    
     BatchSMTOpVerifier private batch_op_verifier;
     SingleSMTOpVerifier private single_op_verifier;
     
@@ -33,12 +36,16 @@ contract OffchainRegistry
     // We allow users to insert/delete/update their value in the tree.
 
     // Submit single op
-    function submit_op(uint256 op, uint256 value, uint256 new_root, bytes calldata op_proof) public
+    function submit_op(uint256 op, uint256 value, uint256 new_root, bytes calldata op_proof) public returns (bool)
     {
 	if(verify_op(op, value, new_root, op_proof))
 	    {
 		registry_root = new_root;
+		emit smt_op(op, msg.sender, value);
+		return true;
 	    }
+
+	return false;
     }
     
     // Verify single op
@@ -54,12 +61,20 @@ contract OffchainRegistry
     }
 
     // Submit batch proof
-    function submit_batch_op(uint256 num_ops, uint256[MAX_OPS] calldata ops, address[MAX_OPS] calldata addresses, uint256[MAX_OPS] calldata values, uint256 new_root, bytes calldata op_proof) public
+    function submit_batch_op(uint256 num_ops, uint256[MAX_OPS] calldata ops, address[MAX_OPS] calldata addresses, uint256[MAX_OPS] calldata values, uint256 new_root, bytes calldata op_proof) public returns (bool)
     {
 	if(verify_batch_op(num_ops, ops, addresses, values, new_root, op_proof))
 	    {
 		registry_root = new_root;
+
+		for(uint i = 0; i < num_ops; i++)
+		    {
+			emit smt_op(ops[i], addresses[i], values[i]);
+		    }
+		return true;
 	    }
+
+	return false;
     }
 	
 

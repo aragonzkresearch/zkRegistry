@@ -18,10 +18,10 @@ contract OffchainRegistryScript is Script
 	BatchSMTOpVerifier batch_op_verifier = new BatchSMTOpVerifier();
 	SingleSMTOpVerifier single_op_verifier = new SingleSMTOpVerifier();
 	OffchainRegistry offchain_registry = new OffchainRegistry(0, batch_op_verifier, single_op_verifier);
-	
 
 	vm.stopBroadcast();
 
 	console.log("Offchain registry address: %s", address(offchain_registry));
+	
     }
 }

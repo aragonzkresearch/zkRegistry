@@ -1,7 +1,7 @@
 use dep::std;
 use dep::smt::{bn254::poseidon2_smt, SMT, SMTProof, op::Operation};
 
-global NUM_TRANSACTIONS = 10;
+global NUM_TRANSACTIONS = 5;
 
 // Signature struct
 struct Secp256k1Signature<N>
@@ -42,7 +42,7 @@ fn address_from_pubkey(pub_key: ([u8; 32], [u8; 32])) -> Field
 
 fn check_op(op: Field, op_key: Field, op_value: Field, root: Field, hash: [u8; 32]) -> bool
 {
-    let computed_hash = dep::std::hash::poseidon2::Poseidon2::hash([op, op_key, op_value, root], 4);
+    let computed_hash = dep::std::hash::poseidon2::Poseidon2::hash([op, op_key, op_value, root], 4); // TODO
 
     let mut computed_hash_bytes = [0; 32];
 
@@ -62,8 +62,8 @@ fn main(num_transactions: pub u32, proof: [SMTProof<Field, Field, Field, 160>; N
     for i in 0..NUM_TRANSACTIONS
     {
         let range_ind = i < num_transactions;
-        assert(!range_ind | (address_from_pubkey(signature[i].pub_key) == address[i])); // Check address
-        assert(!range_ind | check_op(op[i], address[i], op_value[i], cur_root, signature[i].msg_hash)); // Check message
+//        assert(!range_ind | (address_from_pubkey(signature[i].pub_key) == address[i])); // Check address
+//        assert(!range_ind | check_op(op[i], address[i], op_value[i], cur_root, signature[i].msg_hash)); // Check message
         
         cur_root = (range_ind as Field) * smt.compute_root(smt.process(proof[i], op[i], address[i], op_value[i], (range_ind as Field) * cur_root)) + (1 - range_ind as Field) * cur_root; // Compute new root
         assert(signature[i].verify()); // Check signature

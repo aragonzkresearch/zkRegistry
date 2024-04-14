@@ -1,6 +1,8 @@
 #!/bin/bash
-circuit_dirs=("batch_smt_op" "single_smt_op")
-circuits=("BatchSMTOp" "SingleSMTOp")
+#circuit_dirs=("batch_smt_op" "single_smt_op")
+circuit_dirs=("single_smt_op")
+#circuits=("BatchSMTOp" "SingleSMTOp")
+circuits=("SingleSMTOp")
 
 generate_contract() {
 	nargo codegen-verifier

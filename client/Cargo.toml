@@ -1,0 +1,21 @@
+[package]
+name = "zkregistry_client"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ark-ff = "0.4.2"
+clap = { version = "4.5.4", features = ["derive", "env"] }
+ethers = "2.0.14"
+hex = "0.4.3"
+lazy_static = "1.4.0"
+reqwest = { version = "0.12.3", features = ["json"] }
+safecat-lib = { git = "https://github.com/HastilyConceivedCreatures/safecat-lib" }
+secp256k1 = "0.29.0"
+serde = "1.0.197"
+tempdir = "0.3.7"
+tokio = { version = "1.0", features = ["rt", "rt-multi-thread", "macros"] }
+toml = "0.8.12"
+zkhash = { git = "https://github.com/HorizenLabs/poseidon2" }
